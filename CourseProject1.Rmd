@@ -10,7 +10,6 @@ output: html_document
 # Reading the dataset
 
 
-
 <font size="5">First, a "read data" script is added to obtain the file that will be read.</font>
 
 ```{r read_data, echo=TRUE}
