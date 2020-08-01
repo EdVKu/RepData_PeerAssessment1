@@ -1,0 +1,152 @@
+---
+title: "Course Project 1 (Statistic Analysis of Activity Monitoring Data)"
+author: "Eduardo V K"
+date: "7/31/2020"
+output: html_document
+---
+
+# Introduction
+
+# Reading the dataset
+
+
+
+<font size="5">First, a "read data" script is added to obtain the file that will be read.</font>
+
+```{r read_data, echo=TRUE}
+
+  if(!file.exists("./data")){
+    
+    dir.create("./data")
+
+    unzip(zipfile ="./data/repdata_data_activity.zip",exdir = "./data")
+    # The script automatically looks for and validates if the selected directory for the file is in the computer. If it is not, it's added, along with the file
+    
+  }
+  
+path1 <- file.path("./data", "activity.csv")
+act <- read.csv(path1)
+
+```
+
+
+<font size="5">This script makes sure there's a "data" directory path and, if not, it creates one, while unzipping the already downloaded file.
+Make sure to check that the file and the data are both in the same directory path.</font>
+
+
+# Obtaining the quantitative data of the number of steps taken each day, and presenting it as a histogram
+
+<font size="5">First off, a snapshot and a summary of the obtained data structure is done.</font>
+
+```{r hAct}
+head(act)
+
+summary(act)
+
+```
+
+<font size="5">We'll check if the "date" section of the data frame is in an actual POSTIX date format</font>
+``` {r}
+
+class(act$date)
+
+```
+
+<font size="5">We'll soon realize this is not the case, so we'll rectify that.</font>
+
+``` {r}
+
+act$date <- as.POSIXct(act$date)
+
+```
+
+
+<font size="5">We'll now rectify that the class of "date" is in a POSIX date format.</font>
+
+``` {r}
+
+class(act$date)
+
+```
+<font size="5">The number of steps taken per day can now be inicialized.</font>
+
+
+<font size="5">Since there's a considerable amount of NAs (that we'll transform into something usefull), we'll create a second data frame where no NAs are present, for now.</font>
+
+```{r na_rm}
+
+act2 <- act[!is.na(act$steps),]
+
+
+```
+
+<font size="5">And repeat the proccess</font>
+
+```{r hact2}
+
+head(act2)
+
+```
+
+```{r sact2}
+summary(act2)
+
+```
+
+
+<font size="5">First, a data frame that uses the dates as a grouping method will be created using the "date" and "steps" subsets.</font>
+
+``` {r}
+
+actDatSte <- act2[,c("date","steps")]
+
+```
+
+
+
+<font size = "5">Finally, the histogram is obtained, giving the reader the required information without considering NAs</font>
+
+```{r hist_steps}
+
+
+
+```
+
+
+# Obtention of mean and median of daily steps
+
+```{r mean_steps}
+
+```
+
+```{r median_steps}
+
+```
+
+# Obtention of the 5 minute interval containing the maximum number of steps (on average)
+
+```{r interval_steps}
+
+```
+
+# Strategy used to imput missing data
+
+```{r missing_data_input}
+
+```
+
+# Corrected histogram present in previous steps
+
+```{r hist_steps_2}
+
+```
+
+# Plotting the average number of steps taken per 5-minute intervals on weekdays and weekends
+
+```{r steps_intervals_wdays}
+
+```
+
+```{r steps_intervals_wends}
+
+```
