@@ -70,32 +70,7 @@ class(act$date)
 ```
 <font size="5">The number of steps taken per day can now be inicialized.</font>
 
-
-<font size="5">Since there's a considerable amount of NAs (that we'll transform into something usefull), we'll create a second data frame where no NAs are present, for now.</font>
-
-```{r na_rm}
-
-act2 <- act[!is.na(act$steps),]
-
-
-
-```
-
-<font size="5">And repeat the proccess</font>
-
-```{r hact2}
-
-head(act2)
-
-```
-
-```{r sact2}
-summary(act2)
-
-```
-
-
-<font size="5">First, a data frame that uses the dates as a grouping method will be created using the "date" and "steps" subsets.</font>
+<font size="5">First, a data frame that uses the dates as a grouping method will be created using the "date" and "steps" subsets. The gouping will also be done here</font>
 
 ``` {r}
 
@@ -138,6 +113,7 @@ median(actDatSte2$steps)
 
 # Obtention of the 5 minute interval containing the maximum number of steps (on average)
 
+
 ```{r interval_steps}
 
 actInt <- with(act, aggregate(steps, by = list(interval), FUN = mean, na.rm = TRUE))
@@ -147,9 +123,23 @@ actInt[actInt$steps==max(actInt$steps),][1]
 
 ```
 
+<font size = "5">The plot of the average number of steps per five minute interval will be done in order to illustrate the aforementioned result.</font>
+
+```{r plot_5min}
+
+plot(actInt$interval,actInt$steps, type = "l",col = "red", xlab = "time (minutes)", ylab = "number of steps on average", main = "Average steps per 5-minute intervals")
+
+
+```
+
 # Strategy used to imput missing data
 
 ```{r missing_data_input}
+
+avgStep <- actInt$steps[match(act$interval,actInt$interval)]
+actImp <- transform(act, steps = ifelse(is.na(act$steps), yes = avgStep, no = act$steps))
+
+
 
 ```
 
@@ -157,14 +147,29 @@ actInt[actInt$steps==max(actInt$steps),][1]
 
 ```{r hist_steps_2}
 
+actDatSte3 <- with(actImp, aggregate(steps, by = list(date), FUN = sum, na.rm = TRUE))
+
+actDatSte3 <- actDatSte3 %>% rename(steps = x, date = Group.1)
+
+hist(actDatSte3$steps,main = "Total number of steps taken per day", xlab = "Total steps taken per day", col = "red", ylim = c(0,20), breaks = seq(0,25000, by=2500))
+
 ```
 
 # Plotting the average number of steps taken per 5-minute intervals on weekdays and weekends
 
 ```{r steps_intervals_wdays}
+library(ggplot2)
 
-```
+act2 <- act
 
-```{r steps_intervals_wends}
+act2$wday <- weekdays(act$date)
+act2$na.rm <- NULL
+
+act2$wed <- (act2$wday == "Saturday" | act2$wday == "Sunday")
+act2 <- act2 %>% mutate(wed = factor(wed, labels = c("weekday","weekend")))
+actI2 <- aggregate(steps~interval + wed, act2, mean, na.rm = TRUE)
+
+ggplot(actI2, aes(x = (interval), y = steps, color = wed)) + 
+  geom_line() +  facet_grid(wed~.,scales="free")
 
 ```
